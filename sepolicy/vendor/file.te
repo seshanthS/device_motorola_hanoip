@@ -29,3 +29,6 @@ type vendor_persist_fps_file, file_type, vendor_persist_type;
 
 # Capsense
 type vendor_sysfs_capsense, sysfs_type, fs_type;
+
+# Battery Saver
+type sysfs_battery_saver, fs_type, sysfs_type;
