@@ -260,18 +260,20 @@ case "$target" in
         setprop vendor.usb.diag.func.name "diag"
     ;;
     "lahaina")
-        qcom_usb_config="diag,diag_mdm,qdss,qdss_mdm,serial_cdev,serial_cdev_mdm,dpl,rmnet"
-        qcom_adb_usb_config="diag,diag_mdm,qdss,qdss_mdm,serial_cdev,serial_cdev_mdm,dpl,rmnet,adb"
+        qcom_usb_config="diag,serial_cdev,rmnet,dpl,qdss"
+        qcom_adb_usb_config="diag,serial_cdev,rmnet,dpl,qdss,adb"
         bpt_usb_config="diag,serial,rmnet"
         bpt_adb_usb_config="diag,serial,rmnet,adb"
         setprop vendor.usb.controller "a600000.dwc3"
         setprop vendor.usb.rndis.func.name "gsi"
         setprop vendor.usb.rmnet.func.name "gsi"
         setprop vendor.usb.diag.func.name "ffs"
+        factory_usb_config="diag,usbnet"
+        factory_usb_config_adb="diag,usbnet,adb"
      ;;
     "holi")
-        qcom_usb_config="diag,serial_cdev,rmnet"
-        qcom_adb_usb_config="diag,serial_cdev,rmnet,adb"
+        qcom_usb_config="diag,serial_cdev,rmnet,dpl,qdss"
+        qcom_adb_usb_config="diag,serial_cdev,rmnet,dpl,qdss,adb"
         bpt_usb_config="diag,serial,rmnet"
         bpt_adb_usb_config="diag,serial,rmnet,adb"
         factory_usb_config="diag,usbnet"
@@ -280,6 +282,18 @@ case "$target" in
         setprop vendor.usb.rndis.func.name "gsi"
         setprop vendor.usb.rmnet.func.name "gsi"
         setprop vendor.usb.diag.func.name "ffs"
+     ;;
+    "taro")
+        qcom_usb_config="diag,serial_cdev,rmnet,dpl,qdss"
+        qcom_adb_usb_config="diag,serial_cdev,rmnet,dpl,qdss,adb"
+        bpt_usb_config="diag,serial,rmnet"
+        bpt_adb_usb_config="diag,serial,rmnet,adb"
+        setprop vendor.usb.controller "a600000.dwc3"
+        setprop vendor.usb.rndis.func.name "gsi"
+        setprop vendor.usb.rmnet.func.name "gsi"
+        setprop vendor.usb.diag.func.name "ffs"
+        factory_usb_config="diag,usbnet"
+        factory_usb_config_adb="diag,usbnet,adb"
      ;;
 esac
 
@@ -299,6 +313,7 @@ buildtype=`getprop ro.build.type`
 securehw=`getprop ro.boot.secure_hardware`
 cid=`getprop ro.vendor.boot.cid`
 diagmode=`getprop persist.vendor.radio.usbdiag`
+debuggable=`getprop ro.debuggable`
 
 log_info "mmi-usb-sh: persist usb configs = \"$usb_config\", \"$mot_usb_config\", \"$diagmode\""
 
@@ -414,7 +429,7 @@ case "$bootmode" in
         esac
     ;;
     * )
-        if [ "$buildtype" == "user" ] && [ "$phonelock_type" != "1" ] && [ "$usb_restricted" != "1" ]
+        if [ "$buildtype" == "user" ] && [ "$phonelock_type" != "1" ] && [ "$usb_restricted" != "1" ] && [ "$debuggable" != "1"]
         then
             echo 1 > /sys/class/android_usb/android0/secure
             log_info "Disabling enumeration until bootup!"
@@ -442,6 +457,13 @@ case "$bootmode" in
             ;;
         esac
 
+        ffs_mtp=`getprop vendor.usb.use_ffs_mtp`
+        new_persist_usb_config=`getprop persist.vendor.usb.config`
+        if [ "$ffs_mtp" == "1" ] && [ "$new_persist_usb_config" == "mtp" ]
+        then
+            setprop persist.vendor.usb.config none
+        fi
+
         adb_early=`getprop ro.boot.adb_early`
         if [ "$adb_early" == "1" ]; then
             echo 0 > /sys/class/android_usb/android0/secure
@@ -456,11 +478,11 @@ case "$bootmode" in
             exit 0
         fi
 
-        if [ "$buildtype" == "user" ] && [ "$phonelock_type" != "1" ] && [ "$usb_restricted" != "1" ]
+        if [ "$buildtype" == "user" ] && [ "$phonelock_type" != "1" ] && [ "$usb_restricted" != "1" ] && [ "$debuggable" != "1"]
         then
             count=0
             bootcomplete=`getprop vendor.boot_completed`
-            log_info "mmi-usb-sh - bootcomplete = $booted"
+            log_info "mmi-usb-sh - bootcomplete = $bootcomplete"
             while [ "$bootcomplete" != "1" ]; do
                 log_dbg "Sleeping till bootup!"
                 sleep 1
