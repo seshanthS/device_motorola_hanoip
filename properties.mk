@@ -1,6 +1,10 @@
 #
-# Properties for sm6150
+# Properties for hanoip
 #
+
+# ADB - Early
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.boot.adb_early=1
 
 # Audio
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -107,7 +111,8 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 
 # Camera
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.vendor.camera.expose.aux=1
+    persist.vendor.camera.expose.aux=1 \
+    persist.vendor.camera.physical.num=5
 
 # Charger
 PRODUCT_PRODUCT_PROPERTIES += \
@@ -168,6 +173,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.sf.hw=0 \
     debug.sf.latch_unsignaled=1 \
     persist.demo.hdmirotationlock=false \
+    persist.sys.sf.color_mode=0 \
     persist.sys.sf.color_saturation=1.0 \
     persist.sys.sf.native_mode=1 \
     persist.sys.sf.force_brightness_capability=1 \
@@ -309,7 +315,10 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 
 # Sensor
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    persist.vendor.sensors.enable.mag_filter=true
+    persist.vendor.sensors.enable.mag_filter=true \
+    ro.hardware.sensors=hanoip \
+    ro.vendor.sensors.mot_ltv=true \
+    ro.vendor.sensors.glance_approach=false
 
 # System
 PRODUCT_PROPERTY_OVERRIDES += \
