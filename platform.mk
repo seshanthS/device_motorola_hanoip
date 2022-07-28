@@ -21,9 +21,6 @@ KERNEL_VERSION := 4.14
 PRODUCT_PLATFORM_MOT := true
 TARGET_BOARD_PLATFORM := $(SM6150)
 
-# Kernel Headers
-PRODUCT_VENDOR_KERNEL_HEADERS := device/motorola/sm6150-common-kernel/kernel-headers
-
 # Rootdir Path
 MOTOROLA_ROOT := $(PLATFORM_COMMON_PATH)/rootdir
 
