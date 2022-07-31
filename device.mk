@@ -610,3 +610,54 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     libnl \
     libwfdaac_vendor
+
+# Device path
+DEVICE_PATH := device/motorola/hanoip/rootdir
+
+DEVICE_PACKAGE_OVERLAYS += \
+    device/motorola/hanoip/overlay
+
+# Device Specific Permissions
+PRODUCT_COPY_FILES := \
+    frameworks/native/data/etc/handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml \
+    frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.gsm.xml
+
+# Kernel
+PRODUCT_COPY_FILES += \
+    device/motorola/hanoip/prebuilt/Image.gz:kernel
+
+# Kernel Headers
+PRODUCT_VENDOR_KERNEL_HEADERS := device/motorola/hanoip/prebuilt/kernel-headers
+
+# Audio Configuration
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/vendor/etc/mixer_paths.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths.xml \
+    $(DEVICE_PATH)/vendor/etc/audio_policy_volumes.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_volumes.xml \
+    $(DEVICE_PATH)/vendor/etc/default_volume_tables.xml:$(TARGET_COPY_OUT_VENDOR)/etc/default_volume_tables.xml
+
+# Device Init
+PRODUCT_PACKAGES += \
+    fstab.hanoip \
+    vendor-fstab.hanoip \
+    init.recovery.qcom.rc
+
+# AB Partitions
+AB_OTA_PARTITIONS += vendor_boot
+
+# Telephony Packages (AOSP)
+PRODUCT_PACKAGES += \
+    InCallUI \
+    Stk
+
+PRODUCT_AAPT_CONFIG := normal
+PRODUCT_AAPT_PREBUILT_DPI := xxhdpi xhdpi hdpi
+PRODUCT_AAPT_PREF_CONFIG := xxhdpi
+
+PRODUCT_PROPERTY_OVERRIDES := \
+    ro.sf.lcd_density=400
+
+# Inherit from those products. Most specific first.
+$(call inherit-product, device/motorola/hanoip/platform.mk)
+
+# include board vendor blobs
+$(call inherit-product-if-exists, vendor/motorola/hanoip/hanoip-vendor.mk)

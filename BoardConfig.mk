@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+# PlatformConfig
+include device/motorola/hanoip/PlatformConfig.mk
 BUILD_BROKEN_DUP_RULES := true
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 
@@ -276,3 +277,62 @@ WIFI_DRIVER_DEFAULT := qca_cld3
 WIFI_HIDL_FEATURE_DUAL_INTERFACE := true
 WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
 WPA_SUPPLICANT_VERSION := VER_0_8_X
+
+# Boot Header
+BOARD_BOOT_HEADER_VERSION := 3
+
+
+
+
+# Kernel cmdline
+TARGET_PREBUILT_KERNEL := device/motorola/hanoip/prebuilt/Image.gz
+BOARD_KERNEL_CMDLINE += \
+    androidboot.hab.csv=5 \
+    androidboot.hab.product=hanoip \
+    androidboot.hab.cid=50
+
+#TARGET_BOOTLOADER_BOARD_NAME := hanoip #commented during merge
+
+# Platform
+PRODUCT_PLATFORM := sm6150
+
+# Kernel DTB/DTBO
+BOARD_PREBUILT_DTBIMAGE_DIR := device/motorola/hanoip/prebuilt/dtb
+BOARD_PREBUILT_DTBOIMAGE := device/motorola/hanoip/prebuilt/dtbo.img
+
+# Kernel Modules
+BOARD_VENDOR_KERNEL_MODULES := \
+    $(wildcard device/motorola/hanoip/prebuilt/modules/*.ko)
+
+# BOARD_SUPER_PARTITION_GROUPS := mot_dynamic_partitions #commented during merge
+
+# Set error limit to SUPER_PARTITION_SIZE - 500MiB
+BOARD_SUPER_PARTITION_ERROR_LIMIT := 10300162048
+
+# DYNAMIC_PARTITIONS_SIZE = (SUPER_PARTITION_SIZE / 2) - 4MB
+BOARD_MOT_DYNAMIC_PARTITIONS_SIZE := 6169821184
+BOARD_MOT_DYNAMIC_PARTITIONS_PARTITION_LIST := \
+    system \
+    system_ext \
+    product \
+    vendor
+
+# Slightly overprovision dynamic partitions with 50MiB to
+# allow on-device file editing
+BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE := 52428800
+BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 52428800
+BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE := 52428800
+BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE := 52428800
+
+# Reserve space for data encryption (239541551104-16384)
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 14919106048
+
+# Build system_ext image
+TARGET_COPY_OUT_SYSTEM_EXT := system_ext
+BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_SYSTEM_EXTIMAGE_JOURNAL_SIZE := 0
+BOARD_SYSTEM_EXTIMAGE_EXTFS_INODE_COUNT := 4096
+
+# This target has no recovery partition
+BOARD_USES_RECOVERY_AS_BOOT := true
+TARGET_NO_RECOVERY := true

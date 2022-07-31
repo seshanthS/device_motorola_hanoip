@@ -3,7 +3,10 @@
 # Copyright (C) 2016 The CyanogenMod Project
 # Copyright (C) 2017-2020 The LineageOS Project
 #
+<<<<<<< HEAD
 # SPDX-License-Identifier: Apache-2.0
+=======
+>>>>>>> android_device_motorola_hanoip/12
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -22,7 +25,11 @@ set -e
 DEVICE=hanoip
 VENDOR=motorola
 
+<<<<<<< HEAD
 # Load extract_utils and do some sanity checks
+=======
+# Load extract utilities and do some sanity checks.
+>>>>>>> android_device_motorola_hanoip/12
 MY_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "${MY_DIR}" ]]; then MY_DIR="${PWD}"; fi
 
