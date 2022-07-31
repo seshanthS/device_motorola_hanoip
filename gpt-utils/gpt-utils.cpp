@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013,2016, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2013,2016,2020 The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -57,7 +57,8 @@
 
 
 #define LOG_TAG "gpt-utils"
-#include <log/log.h>
+//#include <log/log.h> //commented during merge
+#include <cutils/log.h>
 #include <cutils/properties.h>
 #include "gpt-utils.h"
 #include <zlib.h>
@@ -130,6 +131,7 @@ struct update_data {
      uint32_t num_valid_entries;
 };
 
+int32_t set_boot_lun(char *sg_dev,uint8_t boot_lun_id);
 /******************************************************************************
  * FUNCTIONS
  ******************************************************************************/
@@ -661,6 +663,7 @@ error:
 #endif
 }
 
+
 //Swtich betwieen using either the primary or the backup
 //boot LUN for boot. This is required since UFS boot partitions
 //cannot have a backup GPT which is what we use for failsafe
@@ -733,6 +736,7 @@ int gpt_utils_set_xbl_boot_partition(enum boot_chain chain)
                                 __func__);
                 goto error;
         }
+        /* set boot lun using /dev/sg or /dev/ufs-bsg* */
         if (set_boot_lun(sg_dev_node, boot_lun_id)) {
                 fprintf(stderr, "%s: Failed to set xblbak as boot partition\n",
                                 __func__);
@@ -1553,9 +1557,6 @@ int gpt_disk_commit(struct gpt_disk *disk)
                 goto error;
         }
         ALOGI("%s: Writing back primary partition array", __func__);
-        //Write back the primary partition array
-        if (gpt_set_pentry_arr(disk->hdr, fd, disk->pentry_arr)) {
-                ALOGE("%s: Failed to write primary GPT partition arr",
                                 __func__);
                 goto error;
         }

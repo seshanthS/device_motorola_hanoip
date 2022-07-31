@@ -16,6 +16,18 @@
 
 LOCAL_PATH := $(call my-dir)
 
+ifeq (sm6150,$(PRODUCT_PLATFORM))
+#TODO seshanth check this is called
+include $(call all-subdir-makefiles)
+
+$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr: $(wildcard $(PRODUCT_VENDOR_KERNEL_HEADERS)/*)
+	rm -rf $@
+	mkdir -p $@/include
+	cp -a $(PRODUCT_VENDOR_KERNEL_HEADERS)/. $@/include
+
+endif
+
+
 ifeq ($(TARGET_DEVICE),hanoip)
 include $(call all-makefiles-under,$(LOCAL_PATH))
 
@@ -121,5 +133,3 @@ $(WIFI_FIRMWARE_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	$(hide) ln -sf /mnt/vendor/persist/wlan_mac.bin $@/wlan_mac.bin
 
 ALL_DEFAULT_INSTALLED_MODULES += $(RFS_MDM_ADSP_SYMLINKS) $(RFS_MDM_CDSP_SYMLINKS) $(RFS_MDM_MPSS_SYMLINKS) $(RFS_MDM_SLPI_SYMLINKS) $(WIFI_FIRMWARE_SYMLINKS)
-
-endif
